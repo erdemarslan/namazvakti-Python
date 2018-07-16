@@ -7,7 +7,8 @@ Bu Python Sınıfı Diyanet İşleri Başkanlığından Namaz / ezan vakitlerini
 
 <strong>Kullanımı</strong>
 
-Öncelikle aşağıdaki kütüphaneleri kurunuz.
+Öncelikle aşağıdaki kütüphaneleri kurunuz.,
+
 Request Kütüphanesi
 <code>
 	pip install requests
