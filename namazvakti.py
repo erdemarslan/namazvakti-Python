@@ -17,11 +17,9 @@ class namazvakti():
     ulkeIsimleri = {}
     sehirIsimleri = {}
     ilceIsimleri = {}
-
     __veritabani = None
     __cache = ""
     __cacheKlasorYolu = "cache"
-
     __miladiAylar = {
         1 : "Ocak",
         2 : "Şubat",
@@ -36,7 +34,6 @@ class namazvakti():
         11: "Kasım",
         12: "Aralık"
     }
-
     __haftaninGunleri = {
         1 : "Pazartesi",
         2 : "Salı",
@@ -46,7 +43,6 @@ class namazvakti():
         6 : "Cumartesi",
         7 : "Pazar"
     }
-
     __hicriAylar = {
         1 : "Muharrem",
         2 : "Safer",
@@ -61,7 +57,6 @@ class namazvakti():
         11: "Zi'l-ka'de",
         12: "Zi'l-Hicce"
     }
-
     # Başlatma metodu
     def __init__(self, cacheklasoru = None):
         # Dosya yolumuzu belirtelim
@@ -71,7 +66,6 @@ class namazvakti():
         if cacheklasoru != None:
             self.__cache = cacheklasoru;
         else:
-            
             self.__cache = os.path.join(dosyaYolu, self.__cacheKlasorYolu)
 
         # veritabanını oluştur!
@@ -103,32 +97,26 @@ class namazvakti():
     # şehirleri döner. Eğer ülkenin şehirlerinin ilçesi varsa şehirleri döner yoksa ilçeleri döner!
     def sehirler(self, ulke_id):
         sonuc = { "durum" : "hata", "ilce": False, "veri" : {}}
+
         if str(ulke_id) in self.__veritabani:
             sonuc["durum"] = "basarili"
 
             ulke = self.__veritabani[str(ulke_id)]
-
             sehirListesi = {}
-
             if ulke["ilce_listesi_varmi"] == True:
 
                 liste = []
-
                 for i in ulke["sehirler"]:
                     liste.append(int(i))
-
                 liste.sort()
                 
                 for sehir in liste:
                     sehirAdi = ulke["sehirler"][str(sehir)]["sehir_adi"]
                     if sehirAdi in self.sehirIsimleri:
                         sehirAdi = self.sehirIsimleri[sehirAdi]
-
                     sehirListesi[int(sehir)] = sehirAdi
-
             else:
                 sonuc["ilce"] = True
-
                 for sehir in ulke["sehirler"].values():
                     liste1 = []
                     for i in sehir["ilceler"]:
@@ -141,7 +129,6 @@ class namazvakti():
                             sehirAdi = self.sehirIsimleri[sehirAdi]
                         sehirListesi[ilce] = sehirAdi
 
-
         sonuc["veri"] = sehirListesi
         return sonuc
 
@@ -151,26 +138,20 @@ class namazvakti():
 
         # ülke id geçerliyse!
         if str(ulke_id) in self.__veritabani:
-
             ulke = self.__veritabani[str(ulke_id)]
 
             # ilçeleri varsa dönelim!
             if ulke["ilce_listesi_varmi"] == True:
                 # şehir id geçerliyse
                 if str(sehir_id) in ulke["sehirler"]:
-
                     sonuc["durum"] = "basarili"
-
                     ilceListesi = {}
-
                     for ilce in ulke["sehirler"][str(sehir_id)]["ilceler"]:
                         ilceAdi = ulke["sehirler"][str(sehir_id)]["ilceler"][ilce]
                         if ilceAdi in self.ilceIsimleri:
                             ilceAdi = self.ilceIsimleri[ilceAdi]
                         ilceListesi[ilce] = ilceAdi
-
                     sonuc["veri"] = ilceListesi
-
         return sonuc
 
     # cache klasörünün içindeki dosyaları temizler
@@ -182,14 +163,11 @@ class namazvakti():
 
     # tek bir vakti verir!
     def vakit(self, sehir_id):
+
         sonuc = { "durum" : "hata", "veri" : {}}
-
         yer = self.__yerBilgisi(sehir_id)
-
         cacheDosyaAdi = "cache_" + str(yer["sehir_id"]) + ".ndb"
-
         cacheDosyasi = os.path.join(self.__cache, cacheDosyaAdi)
-
         bugun = datetime.strftime(datetime.now(), "%d.%m.%Y")
 
         # cache dosyası var mı ve okunabiliyor mu?
@@ -211,10 +189,6 @@ class namazvakti():
                     #cache belleğe ana işte burada yaz!
                     with open(cacheDosyasi, "w") as yaz:
                         json.dump(sonuc, yaz)
-
-
-
-
         else:
             # cache dosyası yok! o zaman sunucudan çek ver!
             veri = self.__sunucudanVeriCek(yer)
@@ -225,25 +199,20 @@ class namazvakti():
                 #cache belleğe ana işte burada yaz!
                 with open(cacheDosyasi, "w") as yaz:
                     json.dump(sonuc, yaz)
-                    
-        
+
         if sonuc["durum"] == "basarili":
             sonuc["veri"]["vakit"] = sonuc["veri"]["vakitler"][bugun]
             del sonuc["veri"]["vakitler"]
-
 
         return sonuc
 
     # tüm vakitleri verir! bu cache bellekten okumaz ancak cache belleğe yazar!
     def vakitler(self, sehir_id):
+
         sonuc = { "durum" : "hata", "veri" : {}}
-
         yer = self.__yerBilgisi(sehir_id)
-
         cacheDosyaAdi = "cache_" + str(yer["sehir_id"]) + ".ndb"
-
         cacheDosyasi = os.path.join(self.__cache, cacheDosyaAdi)
-
         veri = self.__sunucudanVeriCek(yer)
 
         if veri["durum"] == "basarili":
@@ -254,16 +223,15 @@ class namazvakti():
 
         return sonuc
 
-
     # Yer ile ilgili bilinmesi gerekenleri verir!
     def __yerBilgisi(self, sehir_id):
+
         # adres dosyası
         adresDosyasi = os.path.join(os.getcwd(), "db", "adresler.ndb")
         with open(adresDosyasi) as adres:
             adresler = json.load(adres)
 
         veri = {}
-
         if str(sehir_id) in adresler:
             veri = (adresler[str(sehir_id)]).copy()
 
@@ -274,7 +242,6 @@ class namazvakti():
     def __tarihDuzelt(self, bozukTarih):
         bozulanTarih = bozukTarih.split(" ")
         aylar = dict((v,k) for k, v in self.__miladiAylar.items())
-
         gun = bozulanTarih[0]
         ay = aylar[bozulanTarih[1]]
         if ay < 10:
@@ -282,7 +249,6 @@ class namazvakti():
         else:
             ay = str(ay)
         yil = bozulanTarih[2]
-
         return (gun + "." + ay + "." + yil)
 
     # tarih için verilen sayılarda 10 dan küçük olanlar için başına sıfır koyar stringe çevirir, yoksa sadece stringe çevirir!
@@ -299,35 +265,27 @@ class namazvakti():
         # geriye bunu döndürelim!
         sonuc = { "durum" : "hata", "veri" : {}}
         vakitler = {}
-
         # tam urlyi dolduralım
         fullURL = "http://namazvakitleri.diyanet.gov.tr" + yer["url"]
-
         # isteğimizi oluşturalım
         istek = requests.get(fullURL)
-
         # eğer isteğimiz bize sonuç döndürmüşse işleme devam edelim!
         if istek.status_code == 200:
 
             icerik = BeautifulSoup(istek.content, "html.parser")
-
             div = icerik.find( "div", {"id":"tab-1"} )
             tablo = div.find("tbody")
 
-            for tr in tablo.find_all("tr"):
-                
+            for tr in tablo.find_all("tr"):      
                 sira = 0
                 simdikiSatir = ""
 
                 for td in tr.find_all("td"):
-
-                    elde = td.text
-                    
+                    elde = td.text          
                     if sira == 0:
                         tarih = self.__tarihDuzelt(elde)
                         tarihbol = tarih.split(".")
                         hicri_saf = islamic.from_gregorian(int(tarihbol[2]), int(tarihbol[1]), int(tarihbol[0]))
-
                         hicri = self.__sifirla(hicri_saf[2]) + "." + self.__sifirla(hicri_saf[1]) + "." + str(hicri_saf[0])
                         hicri_uzun = self.__sifirla(hicri_saf[2]) + " " + self.__hicriAylar[hicri_saf[1]] + " " + str(hicri_saf[0])
 
@@ -347,29 +305,20 @@ class namazvakti():
 
                     if sira == 1:
                         vakitler[simdikiSatir]["imsak"] = elde
-
                     if sira == 2:
                         vakitler[simdikiSatir]["gunes"] = elde
-
                     if sira == 3:
                         vakitler[simdikiSatir]["ogle"] = elde
-
                     if sira == 4:
                         vakitler[simdikiSatir]["ikindi"] = elde
-
                     if sira == 5:
                         vakitler[simdikiSatir]["aksam"] = elde
-
                     if sira == 6:
                         vakitler[simdikiSatir]["yatsi"] = elde
-
-
                     sira += 1 # td for döngüsünün sonu
-
                 sira = 0 # tr for döngüsünün sonu
 
             # burası if status_code == 200 ün içi
-
             sonuc["durum"] = "basarili"
             sonuc["veri"]["ulke"] = yer["ulke"]
             sonuc["veri"]["sehir"] = yer["sehir"]
