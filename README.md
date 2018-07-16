@@ -10,7 +10,11 @@ Bu Python Sınıfı Diyanet İşleri Başkanlığından Namaz / ezan vakitlerini
 Öncelikle aşağıdaki kütüphaneleri kurunuz
 <code>
 	pip install requests
+</code>
+<code>
 	pip install BeautifulSoup
+</code>
+<code>
 	pip install convertdate
 </code>
 
