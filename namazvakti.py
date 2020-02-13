@@ -74,7 +74,7 @@ class namazvakti():
             self.__veritabani = json.load(yer)
 
     # cache klasörünü değiştirir
-    def cacheKlasoru(cacheklasoru):
+    def cacheKlasoru(self,cacheklasoru):
         self.__cache = cacheklasoru;
         return self
 
